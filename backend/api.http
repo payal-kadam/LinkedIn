@@ -1,0 +1,56 @@
+POST http://localhost:9080/register HTTP/1.1
+content-Type: application/json
+
+{
+    "username":"Payal",
+    "password":"1234",
+    "email":"payal@gmail.com",
+    "name":"payal"
+}
+###
+
+POST http://localhost:9080/login HTTP/1.1
+content-Type: application/json
+
+{
+    "email":"payal@gmail.com",
+    "password":"1234"
+}
+###
+
+GET http://localhost:9080/get_user_and_profile HTTP/1.1
+content-Type: application/json
+
+{
+  "token": "4809e305f072afa1ef744a1d591e2f66baa5b4ceb255f7fa4019e64d4287ae63"
+}
+
+###
+
+POST http://localhost:9080/update_profile_data HTTP/1.1
+content-Type: application/json
+
+{
+  "token": "4809e305f072afa1ef744a1d591e2f66baa5b4ceb255f7fa4019e64d4287ae63",
+  "userProfile": {
+    "_id": "69d1ea91c4116f52c4935871",
+    "userId": {
+      "_id": "69d1ea91c4116f52c493586f",
+      "name": "payal",
+      "username": "Payal",
+      "email": "payal@gmail.com",
+      "profilePicture": "default.jpg"
+    },
+    
+    "bio": "",
+    "currentPosition": "",
+    "pastWork": [],
+    "education": [],
+    "__v": 0
+  }
+}
+
+###
+
+GET http://localhost:9080/user/get_all_users HTTP/1.1
+content-Type: application/json
