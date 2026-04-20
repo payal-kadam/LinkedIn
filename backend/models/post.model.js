@@ -11,7 +11,7 @@ const PostSchema =mongoose.Schema({
 
     },
     likes:{
-        type:String,
+        type:Number,
         default:0
     },
     createdAt:{

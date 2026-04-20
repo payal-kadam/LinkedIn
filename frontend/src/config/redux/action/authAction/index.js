@@ -45,8 +45,41 @@ export const registerUser = createAsyncThunk(
         } catch (err) {
             console.log("Register Error:",err.response?.data)
             return thunkAPI.rejectWithValue(
-                err.response?.data || { message: "Registration Failed" }
+                err.response?.data 
             );
         }
     }
 );
+
+
+export const getAboutUser = createAsyncThunk(
+    "user/getAboutUser",
+    async(user,thunkAPI)=>{
+        try{
+            const response = await clientServer.get("/get_user_and_profile",{
+                params:{
+                    token:user.token
+                }
+            })
+
+            return response.data
+
+        }catch(err){
+            return thunkAPI.rejectWithValue(err.response.data)
+        }
+    }
+)
+
+
+export const getAllUsers = createAsyncThunk(
+    "user/getAllUsers",
+    async(_ , thunkAPI)=>{
+        try{
+            const response = await clientServer.get("/user/get_all_users")
+
+            return thunkAPI.fulfillWithValue(response.data)
+        }catch(err){
+            return thunkAPI.rejectWithValue(err.response.data);
+        }
+    }
+)

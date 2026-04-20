@@ -21,6 +21,7 @@ export const createPost =async(req,res) =>{
             body:req.body.body,
             media:req.file!=undefined ?req.file.filename:"",
             filetype:req.file!=undefined ? req.file.mimetype.split("/")[1]:"",
+            likes:0
         })
         await post.save();
         return res.status(200).json({message:"Post Created"});
@@ -44,20 +45,24 @@ export const getAllPosts =async(req,res)=>{
 
 export const deletePost =async(req,res)=>{
     const {token ,post_id} =req.body;
+     console.log("TOKEN RECEIVED:", token);
     try{
 
         const user =await User.findOne({token:token}).select("_id");
 
         if(!user){
-            return res.status(404).json({message:"Usre not found"});
+            return res.status(404).json({message:"User not found"});
 
         }
-        const post =await Post.findOne({_id:post_id});
+        const post =await Post.findById({_id:post_id});
         if(!post){
             return res.status(404).json({message:"Post not found"});
         }
-        if(populate.userId.toString()!== useReducer._id.toString()){
-            return res.status(401).json({message:"Unauthorized"});
+        // if(populate.userId.toString()!== useReducer._id.toString()){
+        //     return res.status(401).json({message:"Unauthorized"});
+        // }
+         if (post.userId.toString() !== user._id.toString()) {
+            return res.status(401).json({ message: "Unauthorized" });
         }
 
         await Post.deleteOne({_id:post_id});
@@ -133,19 +138,30 @@ export const delete_comment_of_user =async(req,res)=>{
     
     }
 }
-export const increment_likes =async(req,res)=>{
-    const {post_id} =req.body;
-    try{
-        const post =await Post.findOne({_id:post_id});
-        if(!post){
-             return res.status(404).json({message:"Post not found"});
-        }
-        post.likes =post.likes + 1;
-        await post.save();
-        return res.json({message:"Likes increment"});
+export const increment_likes = async (req, res) => {
+    const { post_id } = req.body;
 
-    }catch(err){
-        return res.status(500).json({message:err.message});
-    
+    try {
+        const post = await Post.findById(post_id);
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // 🔥 SAFE conversion (handles string/null/undefined)
+        let likes = parseInt(post.likes);
+
+        if (isNaN(likes)) {
+            likes = 0;
+        }
+
+        post.likes = likes + 1;
+
+        await post.save();
+
+        return res.json(post);
+    } catch (err) {
+        console.log("LIKE ERROR:", err); // 👈 DEBUG
+        return res.status(500).json({ message: err.message });
     }
-}
+};
